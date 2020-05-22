@@ -85,7 +85,7 @@ defmodule TodoList.CsvImporter do
 
     defp parse_to_tuples(lines) do        
         lines
-        |> Stream.map(fn line -> String.split(line, ",") |> List.to_tuple() end)
+        |> Stream.map(&(String.split(&1, ",") |> List.to_tuple()))
     end
 
     defp parse_date(tuples) do
@@ -95,7 +95,7 @@ defmodule TodoList.CsvImporter do
                 
                 list = 
                 String.split(date, "/") 
-                |> Enum.map(fn part -> String.to_integer(part) end)
+                |> Enum.map(&String.to_integer/1)
                 
                 {result, date} = List.to_tuple(list)
                 |> Date.from_erl()
@@ -104,8 +104,7 @@ defmodule TodoList.CsvImporter do
                     {date, desc}    
                 else
                     {Date.utc_today(), desc}
-                end
-                
+                end                
             end)
     end        
 
