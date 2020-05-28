@@ -113,3 +113,34 @@ defmodule TodoList.CsvImporter do
         |> Stream.map(fn {date, desc} -> %{date: date, title: desc} end)        
     end
 end
+
+defimpl String.Chars, for: TodoList do
+    def to_string(todo_list) do
+        "struct %TodoList, entries(#{todo_list.auto_id - 1})"
+    end
+end
+
+defimpl Inspect, for: TodoList do
+    def inspect(todo_list, _opts) do
+        "struct %TodoList, entries(#{todo_list.auto_id - 1})"
+    end
+end
+
+defimpl Collectable, for: TodoList do
+  def into(original) do
+      {original, &into_callback/2}
+  end
+
+  defp into_callback(todo_list, {:cont, entry}) do
+      TodoList.add_entry(todo_list, entry)
+  end
+
+  defp into_callback(todo_list, :done) do
+      todo_list
+  end
+
+  defp into_callback(_todo_list, :halt) do
+      :ok
+  end
+
+end
